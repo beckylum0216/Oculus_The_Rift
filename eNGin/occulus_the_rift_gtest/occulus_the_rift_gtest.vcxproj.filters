@@ -113,8 +113,7 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Test004Texture.cpp" />
-    <ClCompile Include="Test003Game.cpp" />
-    <ClCompile Include="Test008Dungeon.cpp" />
+    <ClCompile Include="Test011Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

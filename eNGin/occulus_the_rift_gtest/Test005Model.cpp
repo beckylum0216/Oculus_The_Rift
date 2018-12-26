@@ -2,9 +2,17 @@
 
 #include "Texture.h"
 #include "Model.h"
-/*
+
 
 TEST(TestSuite005_ModelTesting, ModelTest000_TestObjectCreationandDestruction)
+{
+	Model* mod;
+
+	SUCCEED();
+}
+
+
+TEST(TestSuite005_ModelTesting, ModelTest001_TestObjectCreationandDestruction)
 {
 	Model* mod;
 
@@ -16,7 +24,7 @@ TEST(TestSuite005_ModelTesting, ModelTest000_TestObjectCreationandDestruction)
 }
 
 
-TEST(TestSuite005_ModelTesting, ModelTest001_DrawModel)
+TEST(TestSuite005_ModelTesting, ModelTest002_DrawModel)
 {
 	Texture tex;
 
@@ -31,4 +39,3 @@ TEST(TestSuite005_ModelTesting, ModelTest001_DrawModel)
 	SUCCEED();
 }
 
-*/

@@ -7,7 +7,6 @@
 #include <Quarternion.h>
 
 
-
 TEST(TestSuite007_PlayerTesting, PlayerTest001_PlayerCreation)
 {
 	Player* thePlayer;
@@ -15,29 +14,66 @@ TEST(TestSuite007_PlayerTesting, PlayerTest001_PlayerCreation)
 	SUCCEED();
 }
 
-TEST(TestSuite007_PlayerTesting, PlayerTest002_CameraRotation)
+TEST(TestSuite007_PlayerTesting, PlayerTest002_ChangeMovementSpeed)
 {
 	Player* thePlayer;
+
 	thePlayer = Player::GetInstance();
 
-	double theRadian;
-	Vector3 theAxis;
-	Quarternion theResult, tempQuart;
+	thePlayer->SetMoveSpeed(1);
+
+	EXPECT_EQ(1, thePlayer->GetMoveSpeed());
+
+}
+
+TEST(TestSuite007_PlayerTesting, PlayerTest003_ChangeRotationSpeed)
+{
+	Player* thePlayer;
+
+	thePlayer = Player::GetInstance();
+
+	thePlayer->SetRotateSpeed(1);
+
+	EXPECT_EQ(1, thePlayer->GetRotateSpeed());
+
+}
+
+TEST(TestSuite007_PlayerTesting, PlayerTest004_ChangeRotationSpeed)
+{
+	Player* thePlayer;
+
+	thePlayer = Player::GetInstance();
+
+	thePlayer->SetRotateSpeed(1);
+
+	EXPECT_EQ(1, thePlayer->GetRotateSpeed());
+
+}
+
+TEST(TestSuite007_PlayerTesting, PlayerTest009_GetPosition)
+{
+	Player* thePlayer;
+
+	thePlayer = Player::GetInstance();
+
+	thePlayer->SetPos(Vector3(1,1,1));
+
+	EXPECT_EQ(1, thePlayer->GetFB());
+	EXPECT_EQ(1, thePlayer->GetLR());
+	EXPECT_EQ(1, thePlayer->GetUD());
+
+}
+
+TEST(TestSuite007_PlayerTesting, PlayerTest009_GetScale)
+{
+	Player* thePlayer;
+
+	thePlayer = Player::GetInstance();
+
+	thePlayer->SetScale(Vector3(1,1,1));
 	
-	theRadian = 60 * (3.14159265359/ 180);
-	theAxis = Vector3(0, cos(theRadian), sin(theRadian));
-	tempQuart = Quarternion(0, 1, -1, 2);
+	EXPECT_EQ(1, thePlayer->GetScale().GetPointX());
+	EXPECT_EQ(1, thePlayer->GetScale().GetPointY());
+	EXPECT_EQ(1, thePlayer->GetScale().GetPointZ());
 
-	theResult = thePlayer->RotateCamera(theRadian, theAxis, tempQuart, 1.0);
-
-	Vector3 theComparison;
-	theComparison.SetPointX((10 + (4 * sqrt(3))) / 8);
-	theComparison.SetPointY((1 + (2 * sqrt(3))) / 8);
-	theComparison.SetPointZ((14 - (3 * sqrt(3))) / 8);
-
-	EXPECT_EQ(theComparison.GetPointX(), theResult.GetQuartX());
-	EXPECT_EQ(theComparison.GetPointY(), theResult.GetQuartY());
-	EXPECT_EQ(theComparison.GetPointZ(), theResult.GetQuartZ());
-
-	SUCCEED();
 }

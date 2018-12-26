@@ -131,13 +131,12 @@
     <ClCompile Include="Test002Music.cpp" />
     <ClCompile Include="Test000Vector3.cpp" />
     <ClCompile Include="Test001AABB.cpp" />
-    <ClCompile Include="Test003Game.cpp" />
     <ClCompile Include="Test004Texture.cpp" />
     <ClCompile Include="Test005Model.cpp" />
     <ClCompile Include="Test006Quarternion.cpp" />
     <ClCompile Include="Test007Player.cpp" />
-    <ClCompile Include="Test008Dungeon.cpp" />
     <ClCompile Include="Test009SoundPlayer.cpp" />
+    <ClCompile Include="Test011Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\440window.raw" />

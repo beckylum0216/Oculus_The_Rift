@@ -19,8 +19,6 @@ TEST(TestSuite003_GameTesting, DISABLED_GameTest002_GameInitialisation)
 {
 	Game theGame;
 
-	
-
 	theGame.Initialise();
 	theGame.GetMenu()->Init();
 	theGame.Run();
