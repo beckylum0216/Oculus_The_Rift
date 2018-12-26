@@ -1,12 +1,13 @@
-#include <math.h>
 #include <gl/glut.h>
-#include <time.h>
 
 #include "Game.h"
 
 #define SHAY_STATE 0
 #define MENU_STATE 1
 #define GAME_STATE 2
+#define PAUSE_MENU 5
+#define DEATH_MENU 6
+#define STORY_MENU 7
 
 Game game;
 
@@ -33,17 +34,20 @@ void MouseMove(int x, int y);
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(800, 500);
-	glutCreateWindow("Oculus The Rift");
+	glutCreateWindow("Occulus The Rift");
 
 	myinit();
 	game.Initialise();
+	game.GetMenu()->Init();
 
 	glutIgnoreKeyRepeat(1);
 	glutKeyboardUpFunc(releaseKeys);
 	glutKeyboardFunc(keys);
+
+	glutFullScreen();
 
 	glutDisplayFunc(Display);
 	glutIdleFunc(Display);
@@ -72,7 +76,7 @@ void myinit()
 	//Create Camera
 	GLdouble fov = 60;
 	GLdouble aspect = 1 * glutGet(GLUT_WINDOW_WIDTH) / glutGet(GLUT_WINDOW_HEIGHT);
-	GLdouble nearVal = 0.5;
+	GLdouble nearVal = 1;
 	GLdouble farVal = 100;
 
 	gluPerspective(fov, aspect, nearVal, farVal);
@@ -80,7 +84,6 @@ void myinit()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	//glEnable(GL_DEPTH_TEST);
 	gluLookAt(0.0, 1.75, 0.0,
 		0.0, 1.75, -1,
 		0.0f, 1.0f, 0.0f);
@@ -134,12 +137,6 @@ void keys(unsigned char key, int x, int y)
 	}
 	else
 	{
-		switch (key)
-		{
-		case 27:
-			exit(0);
-			break;
-		}
 		game.InputDown(key, x, y);
 	}
 }
@@ -167,15 +164,35 @@ void Mouse(int button, int state, int x, int y)
 	}
 
 	if (game.GetState() == GAME_STATE) {
-		game.MouseClick(button, state, x, y);
+		if (game.GetMenu()->GetMenuState() == MAIN_MENU || game.GetMenu()->GetMenuState() == PAUSE_MENU || game.GetMenu()->GetMenuState() == DEATH_MENU || game.GetMenu()->GetMenuState() == STORY_MENU)
+		{
+			game.GetMenu()->MouseClick(button, state, x, y);
+		}
+		else
+		{
+			game.MouseClick(button, state, x, y);
+		}
+	}
+
+	if (game.GetState() == MENU_STATE) {
+		game.GetMenu()->MouseClick(button, state, x, y);
 	}
 }
 
 void MouseMove(int x, int y)
 {
+	bool showCursor = false;
+
+	if (game.GetMenu()->GetMenuState() == MAIN_MENU || game.GetMenu()->GetMenuState() == PAUSE_MENU || game.GetMenu()->GetMenuState() == DEATH_MENU || game.GetMenu()->GetMenuState() == STORY_MENU)
+	{
+		showCursor = true;
+	}
 	if (game.GetState() == GAME_STATE)
 	{
-		game.MouseLook(x, y);
-		glutWarpPointer(400, 250);
+		if (!showCursor)
+		{
+			glutWarpPointer(game.GetCentreX(), game.GetCentreY());
+			game.MouseLook(x, y);
+		}
 	}
 }

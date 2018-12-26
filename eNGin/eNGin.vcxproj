@@ -75,7 +75,7 @@
     <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir);$(SolutionDir)\eNGin\glut_bin;$(projectDir)/occulus_the_rift_gtest/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/build/native/include;$(projectDir)Include;$(projectDir)occulus_the_rift_gtest;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)\eNGin\glut_bin;$(projectDir)occulus_the_rift_gtest/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/build/native/include;$(projectDir)Include;$(projectDir)occulus_the_rift_gtest;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\eNGin\SDL2-devel-2.0.8-VC\SDL2-2.0.8\lib\x86;$(SolutionDir)\eNGin\SDL2_Mixer\lib\x86\SLD2_mixer.lib;$(SolutionDir)\eNGin\glut_bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -84,7 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(projectDir)/occulus_the_rift_gtest/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/build/native/include;$(projectDir)\occulus_the_rift_gtest;$(SolutionDir)eNGin\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(projectDir)occulus_the_rift_gtest\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\include;$(projectDir)occulus_the_rift_gtest;$(SolutionDir)eNGin\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -92,7 +92,7 @@
       <AdditionalDependencies>SDL2_mixer.lib;glut32.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -106,7 +106,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -119,9 +119,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>SDL2_mixer.lib;freeglut.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(projectDir)Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,16 +140,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Dungeon.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyOwnedStates.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="LevelExit.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Projection.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Quarternion.cpp" />
     <ClCompile Include="Shay.cpp" />
     <ClCompile Include="Shay\AABB.CPP" />
     <ClCompile Include="Shay\AABBLinkedList.cpp" />
@@ -163,19 +171,28 @@
     <ClCompile Include="Shay\Sound.cpp" />
     <ClCompile Include="Shay\SoundTime.cpp" />
     <ClCompile Include="Shay\texturedPolygons.cpp" />
+    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Coin.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Dungeon.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyOwnedStates.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GUI.h" />
+    <ClInclude Include="LevelExit.h" />
     <ClInclude Include="lodepng.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MusicPlayer.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Projection.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Quarternion.h" />
     <ClInclude Include="Shay.h" />
     <ClInclude Include="Shay\AABB.h" />
     <ClInclude Include="Shay\AABBLinkedList.h" />
@@ -189,26 +206,31 @@
     <ClInclude Include="Shay\Sound.h" />
     <ClInclude Include="Shay\SoundTime.h" />
     <ClInclude Include="Shay\texturedPolygons.h" />
+    <ClInclude Include="SoundPlayer.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\sdl2.nuget.redist.2.0.8\build\native\sdl2.nuget.redist.targets" Condition="Exists('..\packages\sdl2.nuget.redist.2.0.8\build\native\sdl2.nuget.redist.targets')" />
-    <Import Project="..\packages\sdl2.nuget.2.0.8\build\native\sdl2.nuget.targets" Condition="Exists('..\packages\sdl2.nuget.2.0.8\build\native\sdl2.nuget.targets')" />
-    <Import Project="..\packages\sdl2_mixer.nuget.redist.2.0.2\build\native\sdl2_mixer.nuget.redist.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.redist.2.0.2\build\native\sdl2_mixer.nuget.redist.targets')" />
-    <Import Project="..\packages\sdl2_mixer.nuget.2.0.2\build\native\sdl2_mixer.nuget.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.2.0.2\build\native\sdl2_mixer.nuget.targets')" />
+    <Import Project="..\packages\libpng-msvc14-x86.1.6.29.7801\build\native\libpng-msvc14-x86.targets" Condition="Exists('..\packages\libpng-msvc14-x86.1.6.29.7801\build\native\libpng-msvc14-x86.targets')" />
+    <Import Project="..\packages\sdl2.nuget.redist.2.0.8.2\build\native\sdl2.nuget.redist.targets" Condition="Exists('..\packages\sdl2.nuget.redist.2.0.8.2\build\native\sdl2.nuget.redist.targets')" />
+    <Import Project="..\packages\sdl2.nuget.2.0.8.2\build\native\sdl2.nuget.targets" Condition="Exists('..\packages\sdl2.nuget.2.0.8.2\build\native\sdl2.nuget.targets')" />
+    <Import Project="..\packages\sdl2_mixer.nuget.redist.2.0.2.2\build\native\sdl2_mixer.nuget.redist.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.redist.2.0.2.2\build\native\sdl2_mixer.nuget.redist.targets')" />
+    <Import Project="..\packages\sdl2_mixer.nuget.2.0.2.2\build\native\sdl2_mixer.nuget.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.2.0.2.2\build\native\sdl2_mixer.nuget.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\sdl2.nuget.redist.2.0.8\build\native\sdl2.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.redist.2.0.8\build\native\sdl2.nuget.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\sdl2.nuget.2.0.8\build\native\sdl2.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.2.0.8\build\native\sdl2.nuget.targets'))" />
-    <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.redist.2.0.2\build\native\sdl2_mixer.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.redist.2.0.2\build\native\sdl2_mixer.nuget.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.2.0.2\build\native\sdl2_mixer.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.2.0.2\build\native\sdl2_mixer.nuget.targets'))" />
+    <Error Condition="!Exists('..\packages\libpng-msvc14-x86.1.6.29.7801\build\native\libpng-msvc14-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-msvc14-x86.1.6.29.7801\build\native\libpng-msvc14-x86.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2.nuget.redist.2.0.8.2\build\native\sdl2.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.redist.2.0.8.2\build\native\sdl2.nuget.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2.nuget.2.0.8.2\build\native\sdl2.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.2.0.8.2\build\native\sdl2.nuget.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.redist.2.0.2.2\build\native\sdl2_mixer.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.redist.2.0.2.2\build\native\sdl2_mixer.nuget.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.2.0.2.2\build\native\sdl2_mixer.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.2.0.2.2\build\native\sdl2_mixer.nuget.targets'))" />
   </Target>
 </Project>

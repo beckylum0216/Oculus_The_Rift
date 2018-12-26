@@ -1,6 +1,4 @@
-
 #include <pch.h>
-#include <math.h>
 
 #include "Vector3.h"
 
@@ -11,99 +9,117 @@ Vector3::Vector3() : x(0),
 
 }
 
-Vector3::Vector3(GLdouble posX, GLdouble posY, GLdouble posZ) : x(posX),
-																y(posY),
-																z(posZ)
+Vector3::Vector3(double posX, double posY, double posZ) : x(posX),
+														  y(posY),
+														  z(posZ)
 {
 
 }
 
-void Vector3::SetPointX(GLdouble posX) {
+void Vector3::SetPointX(double posX) {
 	x = posX;
 }
 
-void Vector3::SetPointY(GLdouble posY) {
+void Vector3::SetPointY(double posY) {
 	y = posY;
 }
 
-void Vector3::SetPointZ(GLdouble posZ) {
+void Vector3::SetPointZ(double posZ) {
 	z = posZ;
 }
 
-GLdouble Vector3::GetPointX() {
+double Vector3::GetPointX() const {
 	return x;
 }
 
-GLdouble Vector3::GetPointY() {
+double Vector3::GetPointY() const {
 	return y;
 }
 
-GLdouble Vector3::GetPointZ() {
+double Vector3::GetPointZ() const {
 	return z;
 }
 
-GLdouble Vector3::VectorMagnitude() 
+double Vector3::VectorMagnitude() 
 {
 	return sqrt((x * x + y * y + z * z));
 }
 
-GLdouble Vector3::DotProduct(Vector3 &in) {
+double Vector3::DotProduct(Vector3 &in) {
 	return x * in.x + y * in.y + z * in.z;
 }
 
-Vector3 Vector3::CrossProduct(Vector3 &in) {
+Vector3 Vector3::CrossProduct(Vector3 in) {
 	Vector3 tempVec(y * in.GetPointZ() - z * in.GetPointY(),
-					x * in.GetPointZ() - z * in.GetPointX(),
+					z * in.GetPointX() - x * in.GetPointZ(),
 					x * in.GetPointY() - y * in.GetPointX());
 
 	return tempVec;
 }
 
-Vector3 Vector3::MultiplyByScalar(GLdouble scalar) {
-	Vector3 tempVec(x * scalar,
-					y * scalar,
-					z * scalar);
-
-	return tempVec;
-}
-
-Vector3 Vector3::UnitNormal(Vector3 &inputVector) {
-	GLdouble mag = VectorMagnitude();
-	Vector3 normalVector;
-	Vector3 resultVector;
-
-	normalVector = CrossProduct(inputVector);
-	resultVector.SetPointX(normalVector.GetPointX() / mag);
-	resultVector.SetPointY(normalVector.GetPointY() / mag);
-	resultVector.SetPointZ(normalVector.GetPointZ() / mag);
-
-	return resultVector;
-}
-
-GLdouble Vector3::VectorAngle(Vector3 targetVector)
+Vector3 Vector3::UnitVector() 
 {
-	GLdouble tempDotResult;
-	GLdouble magnitudeOne;
-	GLdouble magnitudeTwo;
-	GLdouble magnitudeProduct;
-	GLdouble resultAngle;
+	double mag = VectorMagnitude();
+	
+	x /= mag;
+	y /= mag;
+	z /= mag;
 
-	tempDotResult = DotProduct(targetVector);
-	magnitudeOne = VectorMagnitude();
-	magnitudeTwo = targetVector.VectorMagnitude();
-	magnitudeProduct = magnitudeOne * magnitudeTwo;
-	resultAngle = acos(tempDotResult / magnitudeProduct);
-
-	return resultAngle;
+	return *this;
 }
 
-Vector3 Vector3::SubtractVector(Vector3 theInputVector)
-{
-	Vector3 resultVector;
+Vector3& Vector3::operator-=(const Vector3 &rhs) {
+	x -= rhs.x;
+	y -= rhs.y;
+	z -= rhs.z;
 
-	resultVector.x = x - theInputVector.x;
-	resultVector.y = y - theInputVector.y;
-	resultVector.z = z - theInputVector.z;
+	return *this;
+}
 
-	return resultVector;
+Vector3& Vector3::operator+=(const Vector3 &rhs) {
+	x += rhs.x;
+	y += rhs.y;
+	z += rhs.z;
+
+	return *this;
+}
+
+Vector3& Vector3::operator*=(const double &rhs) {
+	x *= rhs;
+	y *= rhs;
+	z *= rhs;
+
+	return *this;
+}
+
+Vector3 operator-(const Vector3 &lhs, const Vector3 &rhs) {
+	Vector3 result(lhs);
+
+	result -= rhs;
+
+	return result;
+}
+
+Vector3 operator+(const Vector3 &lhs, const Vector3 &rhs) {
+	Vector3 result(lhs);
+
+	result += rhs;
+
+	return result;
+}
+
+Vector3 operator*(const Vector3 &lhs, double rhs) {
+	Vector3 result(lhs);
+
+	result *= rhs;
+
+	return result;
+}
+
+Vector3 operator*(double lhs, const Vector3 &rhs) {
+	Vector3 result(rhs);
+
+	result *= lhs;
+
+	return result;
 }

@@ -38,8 +38,8 @@ void Shay::Init()
 	cam.Position(32720.0, 9536.0, //original camera position
 		4800.0, 180.0);
 	/*/
-	cam.Position(-1192.0, 10350.0, //camera in 400 corridor
-		42060.0, 180.0);
+	cam.Position(-1792.0, 10350.0, //camera in 400 corridor
+		42060.0, 0.0);
 	//*/ //comment toggle
 
 	CreatePlains();
@@ -52,13 +52,14 @@ void Shay::Init()
 	// load texture images and create display lists
 	CreateTextureList();
 	CreateTextures();
-
 }
 
 void Shay::Draw() {
 	// check for movement
 	cam.CheckCamera();
-	
+
+	SetWidthHeight(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// DISPLAY TEXTURES
@@ -138,7 +139,6 @@ void Shay::DownKey(unsigned char key, int x, int y) {
 		case 'F':
 			owner->SwitchState();
 			break;
-
 		case 'A':
 		case 'a':
 			cam.DirectionRotateLR(-1);
@@ -1293,7 +1293,7 @@ void Shay::DrawBackdrop()
 	DisplayRoof();
 	DisplayStepBricks ();
 
-	DisplayBanner();
+	//DisplayBanner();
 
 	DisplayBoardWalkGarden();
 	DisplayBoardwalk440WestPaving();
@@ -2072,9 +2072,11 @@ void Shay::DisplayMainPosts ()
 		glCallList(52);
 	glPopMatrix();
 
+
 	///=====================================================
 	///Tutorial 1 Posts
 	///=====================================================
+	/*
 	step = -1940.0;
 
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
@@ -2117,6 +2119,7 @@ void Shay::DisplayMainPosts ()
 	glTranslatef(step + 128.0-1600, 0.0, 20880.0);
 	glCallList(19);
 	glPopMatrix();
+	*/
 }
 
 void Shay::DrawMainPosts ()

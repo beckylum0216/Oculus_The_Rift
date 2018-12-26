@@ -2,130 +2,203 @@
 
 #include "Player.h"
 
-Player::Player() : moveSpeed(0.0),
-				   rotateSpeed(0.0),
-				   lookFB{ 0.0, 0.0, -1.0 },
-				   lookLR{ 1.0, 1.0, 0.0 },
-  				   deltaMoveFB(0.0),
+Player::Player() : deltaMoveFB(0.0),
 				   deltaMoveLR(0.0),
-				   deltaMoveUD(0.0),
-				   rotLR(0.0),
-				   rotUD(0.0),
-				   deltaRotLR(0.0),
-				   deltaRotUD(0.0)
+				   deltaMoveF(0),
+				   deltaMoveB(0),
+				   deltaMoveL(0),
+				   deltaMoveR(0),
+				   damageTime(1),
+				   damageTimer(damageTime),
+				   shotTime(0.3),
+				   shotTimer(shotTime)
 {
 
 }
 
-Player* Player::GetInstance() {
+Player* Player::GetInstance() 
+{
 	static Player instance;
-
+	
 	return &instance;
 }
 
-void Player::Update() {
-	Move();
+void Player::Initialise()
+{
+	Quarternion qd(0, position.GetPointX(), position.GetPointY(), position.GetPointZ());
+	SetCameraViewDelta(qd);
+
+	Vector3 up(0, 1, 0);
+	SetCameraUp(up);
+
+	health = 5;
+	maxHealth = 5;
+}
+
+void Player::Update(float deltaTime, std::map<int, std::vector<Actor*>> entityMap)
+{
+	Move(deltaTime);
 
 	glLoadIdentity();
-	gluLookAt(position.GetPointX(), position.GetPointY() + 1.8, position.GetPointZ(),
-		position.GetPointX() + lookFB.x, position.GetPointY() + lookFB.y + 1.8, position.GetPointZ() + lookFB.z,
-		0.0, 1.0, 0.0);
+	gluLookAt(	position.GetPointX(), position.GetPointY() + 1.8, position.GetPointZ(),
+				position.GetPointX() + cameraViewDelta.GetQuartX(), 
+				position.GetPointY() + cameraViewDelta.GetQuartY(),
+				position.GetPointZ() + cameraViewDelta.GetQuartZ(),
+				0.0, 1.0, 0.0);
+
+	collisionBox.SetMaxPoint(position.GetPointX() + 0.5, position.GetPointY() + 0.5, position.GetPointZ() + 0.5);
+	collisionBox.SetMinPoint(position.GetPointX() - 0.5, position.GetPointY() - 0.5, position.GetPointZ() - 0.5);
+
+	//Check for Wall Collisions
+	for (std::size_t ii = 0; ii < entityMap[2].size(); ii++)
+	{
+		if (collisionBox.AABBtoAABB(entityMap[2][ii]->GetCollider()))
+		{
+			collisionBox.CollideWith(this, *entityMap[2][ii]);
+		}
+	}
+	//Check for projectile collisions
+	for (std::size_t ii = 0; ii < entityMap[5].size(); ii++)
+	{
+		if (entityMap[5][ii] != NULL) {
+			if (collisionBox.AABBtoAABB(entityMap[5][ii]->GetCollider()))
+			{
+				if (damageTimer <= 0) {
+					SetCurrentHealth(GetCurrentHealth() - 1);
+					damageTimer = damageTime;
+					soundPlay.PlaySound(5);
+				}
+			}
+		}
+	}
+
+	damageTimer -= deltaTime;
+
+	shotTimer -= deltaTime;
 }
 
-void Player::SetMoveSpeed(GLdouble spd) {
-	moveSpeed = spd;
+void Player::DirectionB(const double tempMove) {
+	deltaMoveB = tempMove;
 }
 
-void Player::SetRotateSpeed(GLdouble spd) {
-	rotateSpeed = spd;
+void Player::DirectionR(const double tempMove) {
+	deltaMoveR = tempMove;
 }
 
-void Player::DirectionFB(const GLdouble tempMove) {
-	deltaMoveFB = tempMove;
+void Player::DirectionF(const double tempMove) {
+	deltaMoveF = tempMove;
 }
 
-void Player::DirectionUD(const GLdouble tempMove) {
-	deltaMoveUD = tempMove;
+void Player::DirectionL(const double tempMove) {
+	deltaMoveL = tempMove;
 }
 
-void Player::DirectionLR(const GLdouble tempMove) {
-	deltaMoveLR = tempMove;
-}
-
-void Player::DirectionLookUD(const GLdouble tempRot) {
-	deltaRotUD = tempRot * rotateSpeed;
-}
-
-void Player::DirectionLookLR(const GLdouble tempRot) {
-	deltaRotLR = tempRot * rotateSpeed;
-}
-
-GLdouble Player::GetFB() {
+double Player::GetFB() {
 	return position.GetPointZ();
 }
 
-GLdouble Player::GetLR() {
+double Player::GetLR() {
 	return position.GetPointX();
 }
 
-GLdouble Player::GetUD() {
+double Player::GetUD() {
 	return position.GetPointY();
 }
 
-void Player::Move() {
+void Player::Move(float deltaTime) {
+	deltaMoveFB = deltaMoveF - deltaMoveB;
+	deltaMoveLR = deltaMoveR - deltaMoveL;
+
 	if (deltaMoveFB != 0)
-		MoveFB();
+		MoveFB(deltaTime);
 
 	if (deltaMoveLR != 0)
-		MoveLR();
-
-	if (deltaMoveUD != 0)
-		MoveUD();
-
-	if (deltaRotLR / rotateSpeed != 0)
-		LookLR();
-
-	if (deltaRotUD / rotateSpeed != 0)
-		LookUD();
+		MoveLR(deltaTime);
 }
 
-void Player::MoveFB() {
-	GLdouble moveX = deltaMoveFB * lookFB.x * moveSpeed;
-	GLdouble moveZ = deltaMoveFB * lookFB.z * moveSpeed;
+void Player::MoveFB(float deltaTime) {
+
+	Quarternion view = cameraViewDelta.Normalize();
+
+	double moveX = deltaMoveFB * view.GetQuartX() * moveSpeed * deltaTime;
+	double moveZ = deltaMoveFB * view.GetQuartZ() * moveSpeed * deltaTime;
 
 	position.SetPointX(moveX + position.GetPointX());
 	position.SetPointZ(moveZ + position.GetPointZ());
 }
 
-void Player::MoveLR() {
-	GLdouble moveX = deltaMoveLR * lookLR.x * moveSpeed;
-	GLdouble moveZ = deltaMoveLR * lookLR.z * moveSpeed;
+void Player::MoveLR(float deltaTime) {
+
+	Vector3 view(cameraViewDelta.GetQuartX(), cameraViewDelta.GetQuartY(), cameraViewDelta.GetQuartZ());
+
+	view = view.CrossProduct(GetCameraUp());
+	view = view.UnitVector();
+
+	double moveX = deltaMoveLR * view.GetPointX() * moveSpeed * deltaTime;
+	double moveZ = deltaMoveLR * view.GetPointZ() * moveSpeed * deltaTime;
 
 	position.SetPointX(moveX + position.GetPointX());
 	position.SetPointZ(moveZ + position.GetPointZ());
 }
 
-void Player::MoveUD() {
-
+void Player::SetCameraViewDelta(Quarternion inputVector)
+{
+	cameraViewDelta = inputVector;
 }
 
-void Player::LookLR() {
-	rotLR += deltaRotLR;
-
-	float PI = 3.141592654;
-
-	lookFB.x = sin(rotLR);
-	lookFB.z = -cos(rotLR);
-
-	lookLR.x = sin(rotLR  + (float)PI / 2.0);
-	lookLR.z = -cos(rotLR  + (float)PI / 2.0);
+void Player::SetCameraUp(Vector3 inputVector)
+{
+	cameraUp = inputVector;
 }
 
-void Player::LookUD() {
-	rotUD += deltaRotUD;
+Quarternion Player::GetCameraViewDelta()
+{
+	return cameraViewDelta;
+}
 
-	float PI = 3.141592654;
-	lookFB.y = sin(rotUD);
+Vector3 Player::GetCameraViewDeltaVector()
+{
+	return Vector3(cameraViewDelta.GetQuartX(), cameraViewDelta.GetQuartY(), cameraViewDelta.GetQuartZ());
+}
 
-	lookLR.y = sin(rotUD + (float)PI / 2.0);
+Vector3 Player::GetCameraUp()
+{
+	return cameraUp;
+}
+
+// qpq'
+Quarternion Player::RotateCamera(double mouseAngle, Vector3 qAxis, Quarternion pAxis, float deltaTime)
+{
+	Quarternion tempQuart, qQuart, pQuart, qpQuart, quartResult;
+
+	qQuart = tempQuart.QRotation(mouseAngle, qAxis);
+	
+	pQuart.SetQuartW(0);
+	pQuart.SetQuartX(pAxis.GetQuartX());
+	pQuart.SetQuartY(pAxis.GetQuartY());
+	pQuart.SetQuartZ(pAxis.GetQuartZ());
+	
+	qpQuart = qQuart.CrossProduct(pQuart);
+
+	quartResult = qpQuart.CrossProduct(qQuart.Inverse());
+
+	cameraViewDelta = quartResult;
+	
+	return quartResult;
+}
+
+double Player::GetShotTimer() {
+	return shotTimer;
+}
+
+double Player::GetShotTime() {
+	return shotTime;
+}
+
+void Player::SetShotTimer(double t) {
+	shotTimer = t;
+}
+
+void Player::SetShotTime(double t) {
+	shotTime = t;
 }

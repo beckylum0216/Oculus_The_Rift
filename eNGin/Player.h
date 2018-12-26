@@ -1,9 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <gl\glut.h>
-
 #include "Actor.h"
+#include "Quarternion.h"
+#include "SoundPlayer.h"
 
 /**
  *	@class Player
@@ -20,69 +20,85 @@
  *	@author Aaron Thomson
  *	@version 2.0 Change class to singleton design
  *	@date 10-09-2018
+ *
+ *	@author Rebecca Lim
+ *	@version 2.1 Added collision detection
+ *	@date 21-09-2018
+ *
+ *	@author Liam Kinsella
+ *	@version 3.0 Changed player movement
+ *	@date 04-10-2018
+ *
+ *	@author Rebecca Lim
+ *	@version 3.1 Added Quaternion functionality
+ *	@date 09-10-2018
+ *
+ *	@author Aaron Thomson
+ *	@version 3.2 Changed update input map to accept Actor*
+ *	@date 10-10-2018
+ *
+ *	@author Aaron Thomson
+ *	@version 3.3 Player now shoots
+ *	@date 23-10-2018
  */
 class Player : public Actor {
 public:
+	/**
+	 *	Returns the static instance of the Player class
+	 *	Singleton design, only one player exists, this function returns the address of it
+	 */
 	static Player* GetInstance();
 
-	//========================================
 	/**
-	 *	An overridden member taking no arguments
-	 *	Updates the Player's location in the world
+	 *	An overridden function taking one argument
+	 *	The player is a special case class that has its own update function
+	 *	@param deltaTime The time between successive calls
 	 */
-	void Update();
-	//========================================
+	void Update(float deltaTime) override {};
+
+	/**
+	 *	A normal function taking no arguments and returning nothing
+	 *	Initialises the players health and current camera view
+	 */
+	void Initialise();
+
+	/**
+	 *	A normal function taking two argumments
+	 *	Performs all the player's update function in movement and looking
+	 *	@param deltaTime The time between successive calls
+	 *	@param entityMap All possible entities within proximity the player may collide with
+	 */
+	void Update(float deltaTime, std::map<int, std::vector<Actor*>> entityMap);
 
 	//========================================
 	// Set functions
 	/**
 	 *	A normal member taking one argument
-	 *	Sets the move speed for the Player
-	 *	@param spd The desired speed of the Player
-	 */
-	void SetMoveSpeed(GLdouble spd);
-	
-	/**
-	 *	A normal member taking one argument
-	 *	Sets the rotate speed of the Player
-	 *	@param spd The desired rotation speed of the Player
-	 */
-	void SetRotateSpeed(GLdouble spd);
-
-	/**
-	 *	A normal member taking one argument
-	 *	Used to determine if the player is moving forward (1), backward (-1) or not at all (0)
+	 *	Used to determine if the player is moving backward (1) or not backward (0)
 	 *	@param tempMove Which way the Player is moving
 	 */
-	void DirectionFB(const GLdouble tempMove);
-	
-	/**
-	 *	A normal member taking one argument
-	 *	Used to determine if the player is moving up (1), down (-1) or not at all (0)
-	 *	@param tempMove Which way the Player is moving
-	 */
-	void DirectionUD(const GLdouble tempMove);
-	
-	/**
-	 *	A normal member taking one argument
-	 *	Used to determine if the player is moving right (1), left (-1) or not at all (0)
-	 *	@param tempMove Which way the Player is moving
-	 */
-	void DirectionLR(const GLdouble tempMove);
+	void DirectionB(const double tempMove);
 
 	/**
-	 *	A normal member taking one argument
-	 *	Used to determine if the player is rotating up (1), down (-1) or not at all (0)
-	 *	@param tempMove Which way the Player is rotating the camera
-	 */
-	void DirectionLookUD(const GLdouble tempRot);
+	*	A normal member taking one argument
+	*	Used to determine if the player is moving forward (1) or not forward (0)
+	*	@param tempMove Which way the Player is moving
+	*/
+	void DirectionF(const double tempMove);
+	
+	/**
+	*	A normal member taking one argument
+	*	Used to determine if the player is moving left (1) or not left (0)
+	*	@param tempMove Which way the Player is moving
+	*/
+	void DirectionL(const double tempMove);
 
 	/**
-	 *	A normal member taking one argument
-	 *	Used to determine if the player is rotating right (1), left (-1) or not at all (0)
-	 *	@param tempMove Which way the Player is rotating the camera
-	 */
-	void DirectionLookLR(const GLdouble tempRot);
+	*	A normal member taking one argument
+	*	Used to determine if the player is moving right (1) or not right (0)
+	*	@param tempMove Which way the Player is moving
+	*/
+	void DirectionR(const double tempMove);
 	//========================================
 
 	//========================================
@@ -92,21 +108,21 @@ public:
 	 *	Returns the Player's z point location
 	 *	@return The Player's z point
 	 */
-	GLdouble GetFB();
+	double GetFB();
 
 	/**
 	 *	A normal member returning a double value
 	 *	Returns the Player's x point location
 	 *	@return The Player's x point
 	 */
-	GLdouble GetLR();
+	double GetLR();
 
 	/**
 	 *	A normal member returning a double value
 	 *	Returns the Player's y point location
 	 *	@return The Player's y point
 	 */
-	GLdouble GetUD();
+	double GetUD();
 	//========================================
 
 	//========================================
@@ -115,50 +131,117 @@ public:
 	 *	A normal member taking no arguments
 	 *	Used to check if the player has moved, and then update the location
 	 */
-	void Move();
+	void Move(float deltaTime);
 	//========================================
+
+	/**
+	 *	Sets the camera to the new quarternion position 
+	 *	@param theInputVector target vector
+	 */
+	void SetCameraViewDelta(Quarternion inputVector);
+
+	/**
+	 *	Sets the up position of the camera
+	 *	@param theInputVector target vector
+	 */
+	void SetCameraUp(Vector3 inputVector);
+
+	/**
+	 *	Gets the new current view of the camera
+	 *	@return The new current view of the camera
+	 */
+	Quarternion GetCameraViewDelta();
+
+	/**
+	 *	Gets the new current view of the camera as a vector
+	 *	@return The new current camera view as a vector
+	 */
+	Vector3 GetCameraViewDeltaVector();
+
+	/**
+	*	Returns the up direction of the camera
+	*	@return The up vector of the camera
+	*/
+	Vector3 GetCameraUp();
+
+	/**
+	*	Applies the quarternion rotation to the camera position
+	*	
+	*	@param mouseAngle The amount to rotate by
+	*	@param qAxis The axis to rotate about
+	*	@param pAxis The current camera view
+	*	@param deltaTime The change in time since the last call
+	*	@return The result of rotating the camera view
+	*/
+	Quarternion RotateCamera(double mouseAngle, Vector3 qAxis, Quarternion pAxis, float deltaTime);
+
+	/**
+	 *	Returns the amount of time left on the timer before another shot may be made
+	 *	@return The amount of time remaining
+	 */
+	double GetShotTimer();
+
+	/**
+	 *	Returns the amount of time permitted between shots
+	 *	@double The max time between shots
+	 */
+	double GetShotTime();
+
+	/**
+	 *	Sets the amount of time on the timer
+	 *	@param t The amount of time to set
+	 */
+	void SetShotTimer(double t);
+
+	/**
+	 *	Sets the max amount of time between shots
+	 *	@param t The amount of time to set to
+	 */
+	void SetShotTime(double t);
 
 private:
 	//========================================
 	//Singleton design
-	//static Player* instance;
-
 	/**
 	 *	Default constructor
 	 *	Initialises all values
 	 */
 	Player();
 
-	Player(Player const&);
-	void operator=(Player const&);
-	//========================================
+	/**
+	 *	Privatised copy constructor
+	 *	Ensures only one copy of player exists
+	 */
+	Player(Player const&) {};
+	
+	/**
+	 *	Privatised assignment operator
+	 *	Ensures only one player exists
+	 */
+	void operator=(Player const&) {};
 
-	//========================================
-	//Speeds
-	GLdouble moveSpeed,		/*<! The Player's movement speed */
-			 rotateSpeed;	/*<! The Player's rotation speed */
-	//========================================
-
-	//========================================
-	//Look
-	Point lookFB,	/*<! The forward/backward look direction */
-		  lookLR;	/*<! The left/right look direction */
 	//========================================
 
 	//========================================
 	//Movement
-	GLdouble deltaMoveFB,	/*<! The change in direction forward/backward */
-			 deltaMoveLR,	/*<! The change in direction left/right */
-			 deltaMoveUD;	/*<! The change in direction up/down */
+	double deltaMoveFB,		/*<! The total change in direction forward/backward */
+		   deltaMoveLR;		/*<! The total change in direction left/right */
+
+	double	deltaMoveF,		/*<! The change in direction forward */
+			deltaMoveB,		/*<! The change in direction backward */
+			deltaMoveL,		/*<! The change in direction left */
+			deltaMoveR;		/*<! The change in direction right */
 	//========================================
 
-	//========================================
-	//Rotation
-	GLdouble rotLR,		/*<! The rotation angle left/right */
-			 rotUD,		/*<! The rotation angle up/down */
-			 deltaRotLR,/*<! The change in rotation angle left/right */
-			 deltaRotUD;/*<! The change in rotation angle up/down */
-	//========================================
+	Quarternion cameraViewDelta; /*<! The quarternion camera */
+	Vector3 cameraUp;			 /*<! The up position of the camera */
+
+	SoundPlayer soundPlay; /*<! SFX control for player character*/
+
+	double damageTime,		/*<! The amount of time between taking damage */
+		   damageTimer;		/*<! Timer to determine when to take damage*/
+	double shotTime,		/*<! The amount of time between shots */
+		   shotTimer;		/*<! Timer to determine when to shoot */
 
 	//========================================
 	// Move functions
@@ -166,31 +249,13 @@ private:
 	 *	A private member taking no arguments
 	 *	Moves the player forward/backward
 	 */
-	void MoveFB();
+	void MoveFB(float deltaTime);
 	
 	/**
 	 *	A private member taking no arguments
 	 *	Moves the player left/right
 	 */
-	void MoveLR();
-
-	/**
-	 *	A private member taking no arguments
-	 *	Moves the player up/down
-	 */
-	void MoveUD();
-
-	/**
-	 *	A private member taking no arguments
-	 *	Rotates the camera up/down
-	 */
-	void LookUD();
-
-	/**
-	 *	A private member taking no arguments
-	 *	Rotates the camera left/right
-	 */
-	void LookLR();
+	void MoveLR(float deltaTime);
 	//========================================
 };
 
